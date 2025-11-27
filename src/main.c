@@ -35,7 +35,12 @@ int main() {
             case 2: {
                 Player *currentPlayer = choosePlayer(players);
                 if (currentPlayer != NULL) {
-                    system("cls");  // clear menu text
+                    #ifdef __linux__
+                        system("clear");
+                    #endif
+                    #ifdef _WIN32
+                        system("cls");
+                    #endif
                     battle(currentPlayer);
                 }
                 break;

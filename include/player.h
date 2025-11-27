@@ -21,10 +21,9 @@ typedef struct Player {
 
 
 
-Player* createPlayer();
+Player* createPlayer(Player *head);
 Player* choosePlayer(Player *head);
 void updatePlayer(Player *head);
 void displayPlayer(Player *p);
 
 #endif
-

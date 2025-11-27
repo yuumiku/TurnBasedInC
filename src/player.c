@@ -6,39 +6,42 @@
 int isNameTaken(Player *head, const char *name) {
     Player *temp = head;
     while (temp != NULL) {
-        if (strcmp(temp->name, name) == 0) return 1; // Name exists
+        if (strcmp(temp->name, name) == 0) return 1;
         temp = temp->next;
     }
     return 0;
 }
 
 Player* createPlayer(Player *head) {
-    Player *p = (Player*)malloc(sizeof(Player));
+    Player *p = malloc(sizeof(Player));
     if (!p) {
         printf("Memory allocation failed!\n");
         exit(1);
     }
 
     while (1) {
+        char buf[100] = {0};
+        int c;
         printf("Enter player name: ");
-        // Read full line until newline, skipping leftover newlines
-        scanf(" %[^\n]", p->name);
+        /* consume leftover newline if any */
+        while ((c = getchar()) != '\n' && c != EOF) { if (c == EOF) break; }
+        if (fgets(buf, sizeof(buf), stdin) == NULL) buf[0] = '\0';
+        buf[strcspn(buf, "\n")] = '\0';
+        strncpy(p->name, buf, sizeof(p->name)-1);
+        p->name[sizeof(p->name)-1] = '\0';
 
-        // Check if empty
         if (p->name[0] == '\0') {
             printf("Name cannot be empty.\n");
             continue;
         }
 
-        // Check for uniqueness
         if (isNameTaken(head, p->name)) {
             printf("Name already taken. Choose a different name.\n");
         } else {
-            break; // Name is unique
+            break;
         }
     }
 
-    // Initialize stats and potions
     p->level = 1;
     p->maxHP = 100;
     p->hp = 100;
@@ -56,7 +59,6 @@ Player* createPlayer(Player *head) {
     printf("Player '%s' created successfully!\n", p->name);
     return p;
 }
-
 
 Player* choosePlayer(Player *head) {
     if (head == NULL) {
@@ -76,8 +78,12 @@ Player* choosePlayer(Player *head) {
 
     int choice;
     printf("Enter the number of the player to start playing: ");
-    scanf("%d", &choice);
-    getchar(); // remove leftover newline
+    if (scanf("%d", &choice) != 1) {
+        while (getchar() != '\n');
+        printf("Invalid input.\n");
+        return NULL;
+    }
+    getchar();
 
     if (choice < 1 || choice >= i) {
         printf("Invalid choice.\n");
@@ -85,9 +91,7 @@ Player* choosePlayer(Player *head) {
     }
 
     temp = head;
-    for (int j = 1; j < choice; j++) {
-        temp = temp->next;
-    }
+    for (int j = 1; j < choice; j++) temp = temp->next;
 
     printf("You selected: %s\n", temp->name);
     return temp;
@@ -111,7 +115,11 @@ void updatePlayer(Player *head) {
 
     int choice;
     printf("Enter the number of the player you want to update: ");
-    scanf("%d", &choice);
+    if (scanf("%d", &choice) != 1) {
+        while (getchar() != '\n');
+        printf("Invalid input.\n");
+        return;
+    }
     getchar();
 
     if (choice < 1 || choice >= i) {
@@ -119,24 +127,18 @@ void updatePlayer(Player *head) {
         return;
     }
 
-
     temp = head;
-    for (int j = 1; j < choice; j++) {
-        temp = temp->next;
-    }
-
+    for (int j = 1; j < choice; j++) temp = temp->next;
 
     printf("Enter new name for '%s': ", temp->name);
-    fgets(temp->name, 50, stdin);
+    if (fgets(temp->name, sizeof(temp->name), stdin) == NULL) temp->name[0] = '\0';
     temp->name[strcspn(temp->name, "\n")] = '\0';
 
     printf("Player updated successfully!\n");
 }
-
 
 void displayPlayer(Player *p) {
     if (p == NULL) return;
     printf("Name: %s | Level: %d | HP: %d/%d | ATK: %d | DEF: %d | Score: %d\n",
            p->name, p->level, p->hp, p->maxHP, p->attack, p->defense, p->score);
 }
-

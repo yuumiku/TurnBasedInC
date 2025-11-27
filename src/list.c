@@ -71,4 +71,3 @@ void displayAllPlayers(Player *head) {
         temp = temp->next;
     }
 }
-

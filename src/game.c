@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#define Sleep(ms) usleep((ms) * 1000)
+#endif
 #include "player.h"
 #include "game.h"
 
@@ -11,8 +16,6 @@
 #define GREEN   "\x1b[32m"
 #define BLUE    "\x1b[34m"
 #define sleep_ms(ms) Sleep(ms)
-
-// ---------------- UTILITY FUNCTIONS ---------------- //
 
 int rollChance(int percent) {
     return (rand() % 100) < percent;
@@ -106,7 +109,12 @@ void openInventory(Player *player) {
 // ---------------- DISPLAY ---------------- //
 
 void displayBattleScreen(Player *player, Enemy *enemy, int offset) {
-    system("cls");
+    #ifdef __linux__
+        system("clear");
+    #endif
+    #ifdef _WIN32
+        system("cls");
+    #endif
     printf("=== Battle ===\n");
     printf("Player: %s | HP: ", player->name);
     printHealthBar(player->hp, player->maxHP, GREEN);

@@ -8,4 +8,3 @@ Player* deletePlayer(Player *head);
 void displayAllPlayers(Player *head);
 
 #endif
-
